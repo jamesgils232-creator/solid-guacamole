@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click the Pickle Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 2rem;
+      background:https: "C:\Users\richa\Documents\New folder\no.jpg" no-repeat center center fixed;
+      background-size: cover;
+    }
+    header, footer {
+      background: red;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      opacity: 0.9;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    #gameArea {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      margin: auto;
+      border: 3px solid red;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      overflow: hidden;
+    }
+    #pickle {
+      position: absolute;
+      width: 80px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #pickle:hover {
+      transform: rotate(15deg) scale(1.1);
+    }
+    #score, #highScore, #timer {
+      font-size: 1.5rem;
+      margin: 1rem;
+    }
+    #highScore {
+      color: green;
+    }
+    #timer {
+      color: red;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Click the Pickle 🥒</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html">Contact</a>
+      <a href="game.html">Game</a>
+    </nav>
+  </header>
+
+  <main>
+    <p>Click as many pickles as you can before the timer runs out!</p>
+    <div id="score">Score: 0</div>
+    <div id="highScore">High Score: 0</div>
+    <div id="timer">Time Left: 10s</div>
+    <button onclick="startGame()">Start Game</button>
+
+    <div id="gameArea">
+      <img id="pickle" src="C:\Users\richa\Documents\New folder\image.jpg" alt="Pickle">
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 James</p>
+  </footer>
+
+  <!-- Sound Effect -->
+  <audio id="popSound" src="https://www.fesliyanstudios.com/play-mp3/4385" preload="auto"></audio>
+
+  <script>
+    let score = 0;
+    let timeLeft = 10;
+    let gameInterval, timerInterval;
+
+    const pickle = document.getElementById("pickle");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const gameArea = document.getElementById("gameArea");
+    const highScoreDisplay = document.getElementById("highScore");
+    const popSound = document.getElementById("popSound");
+
+    // Load saved high score
+    let highScore = localStorage.getItem("pickleHighScore") || 0;
+    highScoreDisplay.textContent = "High Score: " + highScore;
+
+    function startGame() {
+      score = 0;
+      timeLeft = 10;
+      scoreDisplay.textContent = "Score: 0";
+      timerDisplay.textContent = "Time Left: 10s";
+      pickle.style.display = "block";
+
+      gameInterval = setInterval(movePickle, 800);
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function movePickle() {
+      let x = Math.random() * (gameArea.clientWidth - 80);
+      let y = Math.random() * (gameArea.clientHeight - 80);
+      pickle.style.left = x + "px";
+      pickle.style.top = y + "px";
+    }
+
+    pickle.addEventListener("click", () => {
+      score++;
+      scoreDisplay.textContent = "Score: " + score;
+      popSound.currentTime = 0; // restart sound
+      popSound.play();
+      movePickle();
+    });
+
+    function updateTimer() {
+      timeLeft--;
+      timerDisplay.textContent = "Time Left: " + timeLeft + "s";
+      if (timeLeft <= 0) {
+        clearInterval(gameInterval);
+        clearInterval(timerInterval);
+        pickle.style.display = "none";
+
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem("pickleHighScore", highScore);
+          highScoreDisplay.textContent = "High Score: " + highScore;
+          alert("🎉 New High Score! You scored " + score);
+        } else {
+          alert("Game Over! Your score was: " + score);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
